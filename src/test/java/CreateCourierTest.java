@@ -97,40 +97,22 @@ public class CreateCourierTest {
     @AfterEach
     void tearDown() {
         if (shouldDeleteCourier) {
-            courierId = loginCourier(jsonCreateCourier)
+            courierId = LoginCourierTest.loginCourier(jsonCreateCourier)
                     .then().extract().body().path("id");
-            deleteCourier(courierId)
+            DeleteCourierTest.deleteCourier(courierId)
                     .then().statusCode(200);
         }
     }
 
     // метод для шага "Создать курьера":
     @Step("Send POST request to /api/v1/courier")
-    public Response createCourier(File json) {
+    public static Response createCourier(File json) {
         Response response = given()
                 .header("Content-type", "application/json")
                 .and()
                 .body(json)
                 .when()
                 .post("/api/v1/courier");
-        return response;
-    }
-
-    @Step("Send POST request to /api/v1/courier/login")
-    public Response loginCourier(File json) {
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(json)
-                .when()
-                .post("/api/v1/courier/login");
-        return response;
-    }
-
-    @Step("Send DELETE request to /api/v1/courier/{courierId}")
-    public Response deleteCourier(int courierId) {
-        Response response = given()
-                .delete("/api/v1/courier/{courierId}", courierId);
         return response;
     }
 }
