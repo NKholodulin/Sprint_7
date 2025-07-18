@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.apache.http.HttpStatus.*;
 
 public class CreateCourierTest extends ApiSteps {
     CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
@@ -16,7 +17,7 @@ public class CreateCourierTest extends ApiSteps {
     void createCourierStatusCode() {
         shouldDeleteCourier = true; // включаем удаление после теста
         createCourier(createCourierData)
-                .then().statusCode(201);
+                .then().statusCode(SC_CREATED);
     }
 
     @Test
@@ -34,10 +35,10 @@ public class CreateCourierTest extends ApiSteps {
     void createIdenticalCourier() {
         shouldDeleteCourier = true; // включаем удаление после теста
         createCourier(createCourierData)
-                .then().statusCode(201);
+                .then().statusCode(SC_CREATED);
 
         createCourier(createCourierData)
-                .then().assertThat().body("code", equalTo(409)).body("message", equalTo("Этот логин уже используется. Попробуйте другой.")).and().statusCode(409);
+                .then().assertThat().body("code", equalTo(SC_CONFLICT)).body("message", equalTo("Этот логин уже используется. Попробуйте другой.")).and().statusCode(SC_CONFLICT);
     }
 
     @Test
@@ -47,10 +48,10 @@ public class CreateCourierTest extends ApiSteps {
         shouldDeleteCourier = true; // включаем удаление после теста
         CourierData createCourierWithIdenticalLoginData = new CourierData("holodTest", "12341234", "holod1234");
         createCourier(createCourierData)
-                .then().statusCode(201);
+                .then().statusCode(SC_CREATED);
 
         createCourier(createCourierWithIdenticalLoginData)
-                .then().assertThat().body("code", equalTo(409)).body("message", equalTo("Этот логин уже используется. Попробуйте другой.")).and().statusCode(409);
+                .then().assertThat().body("code", equalTo(SC_CONFLICT)).body("message", equalTo("Этот логин уже используется. Попробуйте другой.")).and().statusCode(SC_CONFLICT);
     }
 
     @Test
@@ -60,7 +61,7 @@ public class CreateCourierTest extends ApiSteps {
         shouldDeleteCourier = true; // включаем удаление после теста
         CourierData createCourierWithoutFirstNameData = CourierData.withLoginAndPassword("holodTest","1234");
         createCourier(createCourierWithoutFirstNameData)
-                .then().statusCode(201);
+                .then().statusCode(SC_CREATED);
     }
 
     @Test
@@ -69,7 +70,7 @@ public class CreateCourierTest extends ApiSteps {
     void createCourierWithoutLogin() {
         CourierData createCourierWithoutLoginData = CourierData.withPasswordAndFirstName("1234", "holod");
         createCourier(createCourierWithoutLoginData)
-                .then().assertThat().body("code", equalTo(400)).body("message", equalTo("Недостаточно данных для создания учетной записи")).and().statusCode(400);
+                .then().assertThat().body("code", equalTo(SC_BAD_REQUEST)).body("message", equalTo("Недостаточно данных для создания учетной записи")).and().statusCode(SC_BAD_REQUEST);
     }
 
     @Test
@@ -78,7 +79,7 @@ public class CreateCourierTest extends ApiSteps {
     void createCourierWithoutPassword() {
         CourierData createCourierWithoutPasswordData = CourierData.withLoginAndFirstName("holodTest","holod");
         createCourier(createCourierWithoutPasswordData)
-                .then().assertThat().body("code", equalTo(400)).body("message", equalTo("Недостаточно данных для создания учетной записи")).and().statusCode(400);
+                .then().assertThat().body("code", equalTo(SC_BAD_REQUEST)).body("message", equalTo("Недостаточно данных для создания учетной записи")).and().statusCode(SC_BAD_REQUEST);
     }
 
     @AfterEach
@@ -87,7 +88,7 @@ public class CreateCourierTest extends ApiSteps {
             courierId = loginCourier(createCourierData)
                     .then().extract().body().path("id");
             DeleteCourierTest.deleteCourier(courierId)
-                    .then().statusCode(200);
+                    .then().statusCode(SC_OK);
         }
     }
 }

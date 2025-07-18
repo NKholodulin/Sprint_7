@@ -2,6 +2,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.hamcrest.Matchers.*;
+import static org.apache.http.HttpStatus.*;
 
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public class CreateOrderTest extends ApiSteps {
     public void createOrderWithParameters(Map<String, Object> orderData) {
         createOrder(orderData)
                 .then()
-                .statusCode(201)
+                .statusCode(SC_CREATED)
                 .body("track", notNullValue());
     }
 }

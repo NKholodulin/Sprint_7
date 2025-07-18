@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.apache.http.HttpStatus.*;
 
 public class DeleteCourierTest extends ApiSteps {
     CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
@@ -14,7 +15,7 @@ public class DeleteCourierTest extends ApiSteps {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        createCourier(createCourierData).then().statusCode(201);
+        createCourier(createCourierData).then().statusCode(SC_CREATED);
         courierId = LoginCourierTest.loginCourier(createCourierData).then().extract().body().path("id");
     }
 
@@ -24,7 +25,7 @@ public class DeleteCourierTest extends ApiSteps {
     void deleteCourierCheckStatusCode() {
         shouldDeleteCourier = false; // выключаем удаление после теста
         deleteCourier(courierId)
-                .then().statusCode(200);
+                .then().statusCode(SC_OK);
     }
 
     @Test
@@ -42,9 +43,9 @@ public class DeleteCourierTest extends ApiSteps {
     void deleteCourierDouble() {
         shouldDeleteCourier = false; // выключаем удаление после теста
         deleteCourier(courierId)
-                .then().statusCode(200);
+                .then().statusCode(SC_OK);
         deleteCourier(courierId)
-                .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Курьера с таким id нет.")).and().statusCode(404);
+                .then().assertThat().body("code", equalTo(SC_NOT_FOUND)).body("message", equalTo("Курьера с таким id нет.")).and().statusCode(SC_NOT_FOUND);
     }
 
     @Test
@@ -53,7 +54,7 @@ public class DeleteCourierTest extends ApiSteps {
     void deleteNonExistingCourier() {
         shouldDeleteCourier = true; // включаем удаление после теста
         deleteCourier(404)
-                .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Курьера с таким id нет.")).and().statusCode(404);
+                .then().assertThat().body("code", equalTo(SC_NOT_FOUND)).body("message", equalTo("Курьера с таким id нет.")).and().statusCode(SC_NOT_FOUND);
     }
 
     @Test
@@ -62,14 +63,14 @@ public class DeleteCourierTest extends ApiSteps {
     void deleteCourierWithoutIdTest() {
         shouldDeleteCourier = true; // включаем удаление после теста
         deleteCourierWithoutId()
-                .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Not Found.")).and().statusCode(404);
+                .then().assertThat().body("code", equalTo(SC_NOT_FOUND)).body("message", equalTo("Not Found.")).and().statusCode(SC_NOT_FOUND);
     }
 
     @AfterEach
     void tearDown() {
         if (shouldDeleteCourier) {
             deleteCourier(courierId)
-                    .then().statusCode(200);
+                    .then().statusCode(SC_OK);
         }
     }
 }

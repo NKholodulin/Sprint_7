@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.apache.http.HttpStatus.*;
 
 public class LoginCourierTest extends ApiSteps {
     CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
@@ -15,7 +16,7 @@ public class LoginCourierTest extends ApiSteps {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        createCourier(createCourierData).then().statusCode(201);
+        createCourier(createCourierData).then().statusCode(SC_CREATED);
     }
 
     @Test
@@ -24,7 +25,7 @@ public class LoginCourierTest extends ApiSteps {
     void loginCourierStatusCode() {
         shouldDeleteCourier = true; // включаем удаление после теста
         loginCourier(createCourierData)
-                .then().statusCode(200);
+                .then().statusCode(SC_OK);
     }
 
     @Test
@@ -42,7 +43,7 @@ public class LoginCourierTest extends ApiSteps {
         CourierData createCourierWithoutFirstNameData = CourierData.withLoginAndPassword("holodTest","1234");
         shouldDeleteCourier = true; // включаем удаление после теста
         loginCourier(createCourierWithoutFirstNameData)
-                .then().assertThat().body("id", notNullValue()).and().statusCode(200);
+                .then().assertThat().body("id", notNullValue()).and().statusCode(SC_OK);
     }
 
     @Test
@@ -52,7 +53,7 @@ public class LoginCourierTest extends ApiSteps {
         CourierData createCourierWithoutLoginData = CourierData.withPasswordAndFirstName("1234", "holod");
         shouldDeleteCourier = true; // включаем удаление после теста
         loginCourier(createCourierWithoutLoginData)
-                .then().statusCode(400);
+                .then().statusCode(SC_BAD_REQUEST);
     }
 
     @Test
@@ -62,7 +63,7 @@ public class LoginCourierTest extends ApiSteps {
         CourierData createCourierWithoutPasswordData = CourierData.withLoginAndFirstName("holodTest","holod");
         shouldDeleteCourier = true; // включаем удаление после теста
         loginCourier(createCourierWithoutPasswordData)
-                .then().statusCode(400);
+                .then().statusCode(SC_BAD_REQUEST);
     }
 
     @Test
@@ -72,7 +73,7 @@ public class LoginCourierTest extends ApiSteps {
         CourierData createCourierWithWrongLoginData = new CourierData("holodTestWrong", "1234", "holod");
         shouldDeleteCourier = true; // включаем удаление после теста
         loginCourier(createCourierWithWrongLoginData)
-                .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Учетная запись не найдена")).and().statusCode(404);
+                .then().assertThat().body("code", equalTo(SC_NOT_FOUND)).body("message", equalTo("Учетная запись не найдена")).and().statusCode(SC_NOT_FOUND);
     }
 
     @Test
@@ -82,7 +83,7 @@ public class LoginCourierTest extends ApiSteps {
         CourierData createCourierWithIdenticalLoginData = new CourierData("holodTest", "12341234", "holod1234");
         shouldDeleteCourier = true; // включаем удаление после теста
         loginCourier(createCourierWithIdenticalLoginData)
-                .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Учетная запись не найдена")).and().statusCode(404);
+                .then().assertThat().body("code", equalTo(SC_NOT_FOUND)).body("message", equalTo("Учетная запись не найдена")).and().statusCode(SC_NOT_FOUND);
     }
 
     @Test
@@ -92,7 +93,7 @@ public class LoginCourierTest extends ApiSteps {
         CourierData NonExistentCourierData = new CourierData("nonnonnononnon", "nonnonnononnon", "nonnonnononnon");
         shouldDeleteCourier = true; // включаем удаление после теста
         loginCourier(NonExistentCourierData)
-                .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Учетная запись не найдена")).and().statusCode(404);
+                .then().assertThat().body("code", equalTo(SC_NOT_FOUND)).body("message", equalTo("Учетная запись не найдена")).and().statusCode(SC_NOT_FOUND);
     }
 
     @AfterEach
@@ -101,7 +102,7 @@ public class LoginCourierTest extends ApiSteps {
             courierId = loginCourier(createCourierData)
                     .then().extract().body().path("id");
             DeleteCourierTest.deleteCourier(courierId)
-                    .then().statusCode(200);
+                    .then().statusCode(SC_OK);
         }
     }
 }

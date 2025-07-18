@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.apache.http.HttpStatus.*;
 
 public class AcceptOrderTest extends ApiSteps {
     CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
@@ -15,7 +16,7 @@ public class AcceptOrderTest extends ApiSteps {
     @BeforeEach
     public void setUp() {
         super.setUp();
-        createCourier(createCourierData).then().statusCode(201);
+        createCourier(createCourierData).then().statusCode(SC_CREATED);
         courierId = loginCourier(createCourierData).then().extract().body().path("id");
         trackId = createOrder(singleOrderData).then().extract().body().path("track");
         orderId = getOrderByTrack(trackId).then().extract().body().path("order.id");
@@ -27,7 +28,7 @@ public class AcceptOrderTest extends ApiSteps {
     void acceptOrderCheckStatusCode() {
         shouldDeleteCourier = true; // включаем удаление после теста
         acceptOrder(orderId, courierId)
-                .then().statusCode(200);
+                .then().statusCode(SC_OK);
     }
 
     @Test
@@ -45,7 +46,7 @@ public class AcceptOrderTest extends ApiSteps {
     void acceptOrderCheckWithoutCourierId() {
         shouldDeleteCourier = true; // включаем удаление после теста
         acceptOrderWithoutCourierId(orderId)
-                .then().assertThat().body("code", equalTo(400)).body("message", equalTo("Недостаточно данных для поиска")).and().statusCode(400);
+                .then().assertThat().body("code", equalTo(SC_BAD_REQUEST)).body("message", equalTo("Недостаточно данных для поиска")).and().statusCode(SC_BAD_REQUEST);
     }
     @Test
     @DisplayName("Check without orderId of /api/v1/orders/accept/?courierId={courierId}") // имя теста
@@ -53,7 +54,7 @@ public class AcceptOrderTest extends ApiSteps {
     void acceptOrderCheckWithoutOrderId() {
         shouldDeleteCourier = true; // включаем удаление после теста
         acceptOrderWithoutOrderId(courierId)
-                .then().assertThat().body("code", equalTo(400)).body("message", equalTo("Недостаточно данных для поиска")).and().statusCode(400);
+                .then().assertThat().body("code", equalTo(SC_BAD_REQUEST)).body("message", equalTo("Недостаточно данных для поиска")).and().statusCode(SC_BAD_REQUEST);
     }
 
     @Test
@@ -62,7 +63,7 @@ public class AcceptOrderTest extends ApiSteps {
     void acceptOrderCheckWithIncorrectCourierId() {
         shouldDeleteCourier = true; // включаем удаление после теста
         acceptOrderWithIncorrectCourierId(orderId)
-                .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Курьера с таким id не существует")).and().statusCode(404);
+                .then().assertThat().body("code", equalTo(SC_NOT_FOUND)).body("message", equalTo("Курьера с таким id не существует")).and().statusCode(SC_NOT_FOUND);
     }
 
     @Test
@@ -71,14 +72,14 @@ public class AcceptOrderTest extends ApiSteps {
     void acceptOrderCheckWithIncorrectOrderId() {
         shouldDeleteCourier = true; // включаем удаление после теста
         acceptOrderWithIncorrectOrderId(courierId)
-                .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Заказа с таким id не существует")).and().statusCode(404);
+                .then().assertThat().body("code", equalTo(SC_NOT_FOUND)).body("message", equalTo("Заказа с таким id не существует")).and().statusCode(SC_NOT_FOUND);
     }
 
     @AfterEach
     void tearDown() {
         if (shouldDeleteCourier) {
             DeleteCourierTest.deleteCourier(courierId)
-                    .then().statusCode(200);
+                    .then().statusCode(SC_OK);
         }
     }
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
+import static org.apache.http.HttpStatus.*;
 
 public class ListOrdersTest extends ApiSteps {
     @Test
@@ -12,7 +13,7 @@ public class ListOrdersTest extends ApiSteps {
     @Description("Basic test for /api/v1/orders endpoint")
     void listOrdersStatusCode() {
         listOrders()
-                .then().statusCode(200);
+                .then().statusCode(SC_OK);
     }
 
     @Test
