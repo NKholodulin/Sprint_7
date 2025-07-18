@@ -1,26 +1,21 @@
 import io.qameta.allure.Description;
-import io.qameta.allure.Step;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class GetOrderByTrackTest {
+public class GetOrderByTrackTest extends ApiSteps {
     private int trackId;
     private Map<String, Object> singleOrderData = OrderData.orderDataProvider().findFirst().orElseThrow();
 
     @BeforeEach
     public void setUp() {
-
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
-        trackId = CreateOrderTest.createOrder(singleOrderData).then().extract().body().path("track");
+        super.setUp();
+        trackId = createOrder(singleOrderData).then().extract().body().path("track");
     }
 
     @Test
@@ -53,22 +48,5 @@ public class GetOrderByTrackTest {
     void getOrderByTrackCheckWithIncorrectTrackId() {
         getOrderByTrack(123)
                 .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Заказ не найден")).and().statusCode(404);
-    }
-
-    @Step("Send GET request to /api/v1/orders/track?t={trackId}")
-    public static Response getOrderByTrack(int trackId) {
-        Response response = given()
-                .queryParam("t", trackId)
-                .when()
-                .get("/api/v1/orders/track");
-        return response;
-    }
-
-    @Step("Send GET request to /api/v1/orders/track")
-    public static Response getOrderByTrackWithoutTrackId() {
-        Response response = given()
-                .when()
-                .get("/api/v1/orders/track");
-        return response;
     }
 }

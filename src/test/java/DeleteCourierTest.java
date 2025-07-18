@@ -1,25 +1,20 @@
 import io.qameta.allure.Description;
-import io.qameta.allure.Step;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-public class DeleteCourierTest {
+public class DeleteCourierTest extends ApiSteps {
     CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
     private boolean shouldDeleteCourier = false;
     private int courierId;
 
     @BeforeEach
     public void setUp() {
-
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
-        CreateCourierTest.createCourier(createCourierData).then().statusCode(201);
+        super.setUp();
+        createCourier(createCourierData).then().statusCode(201);
         courierId = LoginCourierTest.loginCourier(createCourierData).then().extract().body().path("id");
     }
 
@@ -73,21 +68,8 @@ public class DeleteCourierTest {
     @AfterEach
     void tearDown() {
         if (shouldDeleteCourier) {
-            DeleteCourierTest.deleteCourier(courierId)
+            deleteCourier(courierId)
                     .then().statusCode(200);
         }
-    }
-
-    @Step("Send DELETE request to /api/v1/courier/{courierId}")
-    public static Response deleteCourier(int courierId) {
-        Response response = given()
-                .delete("/api/v1/courier/{courierId}", courierId);
-        return response;
-    }
-    @Step("Send DELETE request to /api/v1/courier/courierId")
-    public static Response deleteCourierWithoutId() {
-        Response response = given()
-                .delete("/api/v1/courier/");
-        return response;
     }
 }

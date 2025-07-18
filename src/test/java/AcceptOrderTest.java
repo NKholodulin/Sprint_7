@@ -1,16 +1,11 @@
 import io.qameta.allure.Description;
-import io.qameta.allure.Step;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
 
 import java.util.Map;
 
-
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-public class AcceptOrderTest {
+public class AcceptOrderTest extends ApiSteps {
     CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
     private boolean shouldDeleteCourier = false;
     private int courierId;
@@ -19,12 +14,11 @@ public class AcceptOrderTest {
     private Map<String, Object> singleOrderData = OrderData.orderDataProvider().findFirst().orElseThrow();
     @BeforeEach
     public void setUp() {
-
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
-        CreateCourierTest.createCourier(createCourierData).then().statusCode(201);
-        courierId = LoginCourierTest.loginCourier(createCourierData).then().extract().body().path("id");
-        trackId = CreateOrderTest.createOrder(singleOrderData).then().extract().body().path("track");
-        orderId = GetOrderByTrackTest.getOrderByTrack(trackId).then().extract().body().path("order.id");
+        super.setUp();
+        createCourier(createCourierData).then().statusCode(201);
+        courierId = loginCourier(createCourierData).then().extract().body().path("id");
+        trackId = createOrder(singleOrderData).then().extract().body().path("track");
+        orderId = getOrderByTrack(trackId).then().extract().body().path("order.id");
     }
 
     @Test
@@ -86,53 +80,5 @@ public class AcceptOrderTest {
             DeleteCourierTest.deleteCourier(courierId)
                     .then().statusCode(200);
         }
-    }
-
-    @Step("Send PUT request to /api/v1/orders/accept/{orderId}?courierId={courierId}")
-    public static Response acceptOrder(int orderId, int courierId) {
-        Response response = given()
-                .queryParam("courierId",courierId)
-                .pathParam("orderId", orderId)
-                .when()
-                .put("/api/v1/orders/accept/{orderId}");
-        return response;
-    }
-
-    @Step("Send PUT request without courierId to /api/v1/orders/accept/{orderId}")
-    public static Response acceptOrderWithoutCourierId(int orderId) {
-        Response response = given()
-                .pathParam("orderId", orderId)
-                .when()
-                .put("/api/v1/orders/accept/{orderId}");
-        return response;
-    }
-
-    @Step("Send PUT request without orderId to /api/v1/orders/accept/?courierId={courierId}")
-    public static Response acceptOrderWithoutOrderId(int courierId) {
-        Response response = given()
-                .queryParam("courierId", courierId)
-                .when()
-                .put("/api/v1/orders/accept/");
-        return response;
-    }
-
-    @Step("Send PUT request with incorrect courierId to /api/v1/orders/accept/{orderId}?courierId=123")
-    public static Response acceptOrderWithIncorrectCourierId(int orderId) {
-        Response response = given()
-                .queryParam("courierId",123)
-                .pathParam("orderId", orderId)
-                .when()
-                .put("/api/v1/orders/accept/{orderId}");
-        return response;
-    }
-
-    @Step("Send PUT request with incorrect orderId to /api/v1/orders/accept/123?courierId={courierId}")
-    public static Response acceptOrderWithIncorrectOrderId(int courierId) {
-        Response response = given()
-                .queryParam("courierId",courierId)
-                .pathParam("orderId", 123)
-                .when()
-                .put("/api/v1/orders/accept/{orderId}");
-        return response;
     }
 }

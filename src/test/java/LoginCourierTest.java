@@ -1,26 +1,21 @@
 import io.qameta.allure.Description;
-import io.qameta.allure.Step;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-public class LoginCourierTest {
+public class LoginCourierTest extends ApiSteps {
     CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
     private boolean shouldDeleteCourier = false;
     private int courierId;
 
     @BeforeEach
     public void setUp() {
-
-        RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
-        CreateCourierTest.createCourier(createCourierData).then().statusCode(201);
+        super.setUp();
+        createCourier(createCourierData).then().statusCode(201);
     }
 
     @Test
@@ -108,16 +103,5 @@ public class LoginCourierTest {
             DeleteCourierTest.deleteCourier(courierId)
                     .then().statusCode(200);
         }
-    }
-
-    @Step("Send POST request to /api/v1/courier/login")
-    public static Response loginCourier(CourierData createCourierData) {
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(createCourierData)
-                .when()
-                .post("/api/v1/courier/login");
-        return response;
     }
 }
