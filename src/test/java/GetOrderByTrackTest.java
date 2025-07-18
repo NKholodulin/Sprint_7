@@ -20,19 +20,11 @@ public class GetOrderByTrackTest extends ApiSteps {
     }
 
     @Test
-    @DisplayName("Check status code of /api/v1/orders/track?t={trackId}") // имя теста
+    @DisplayName("Check response and status code of /api/v1/orders/track?t={trackId}") // имя теста
     @Description("Basic test for /api/v1/orders/track?t={trackId} endpoint")
-    void getOrderByTrackCheckStatusCode() {
+    void getOrderByTrackCheckResponseAndStatusCode() {
         getOrderByTrack(trackId)
-                .then().statusCode(SC_OK);
-    }
-
-    @Test
-    @DisplayName("Check response of /api/v1/orders/track?t={trackId}") // имя теста
-    @Description("Basic test for /api/v1/orders/track?t={trackId} endpoint")
-    void getOrderByTrackCheckResponse() {
-        getOrderByTrack(trackId)
-                .then().body("order", notNullValue()).body("order.track", notNullValue()).body("order.id", notNullValue());
+                .then().body("order", notNullValue()).body("order.track", notNullValue()).body("order.id", notNullValue()).statusCode(SC_OK);
     }
 
     @Test

@@ -9,20 +9,13 @@ import static org.apache.http.HttpStatus.*;
 
 public class ListOrdersTest extends ApiSteps {
     @Test
-    @DisplayName("Check status code of /api/v1/orders") // имя теста
+    @DisplayName("Check body and status code of /api/v1/orders") // имя теста
     @Description("Basic test for /api/v1/orders endpoint")
-    void listOrdersStatusCode() {
-        listOrders()
-                .then().statusCode(SC_OK);
-    }
-
-    @Test
-    @DisplayName("Check body of /api/v1/orders") // имя теста
-    @Description("Basic test for /api/v1/orders endpoint")
-    void listOrdersResponse() {
+    void listOrdersResponseAndStatusCode() {
         listOrders()
                 .then()
                 .body("orders", notNullValue())
-                .body("orders", instanceOf(List.class));
+                .body("orders", instanceOf(List.class))
+                .statusCode(SC_OK);
     }
 }

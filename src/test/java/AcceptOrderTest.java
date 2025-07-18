@@ -23,21 +23,12 @@ public class AcceptOrderTest extends ApiSteps {
     }
 
     @Test
-    @DisplayName("Check status code of /api/v1/orders/accept/{orderId}?courierId={courierId}") // имя теста
+    @DisplayName("Check response and status code of /api/v1/orders/accept/{orderId}?courierId={courierId}") // имя теста
     @Description("Basic test for /api/v1/orders/accept/{orderId}?courierId={courierId} endpoint")
-    void acceptOrderCheckStatusCode() {
+    void acceptOrderCheckResponseAndStatusCode() {
         shouldDeleteCourier = true; // включаем удаление после теста
         acceptOrder(orderId, courierId)
-                .then().statusCode(SC_OK);
-    }
-
-    @Test
-    @DisplayName("Check response of /api/v1/orders/accept/{orderId}?courierId={courierId}") // имя теста
-    @Description("Basic test for /api/v1/orders/accept/{orderId}?courierId={courierId} endpoint")
-    void acceptOrderCheckResponse() {
-        shouldDeleteCourier = true; // включаем удаление после теста
-        acceptOrder(orderId, courierId)
-                .then().assertThat().body("ok", equalTo(true));
+                .then().assertThat().body("ok", equalTo(true)).statusCode(SC_OK);
     }
 
     @Test

@@ -20,21 +20,12 @@ public class DeleteCourierTest extends ApiSteps {
     }
 
     @Test
-    @DisplayName("Check status code of /api/v1/courier/{courierId}") // имя теста
+    @DisplayName("Check response and status code of /api/v1/courier/{courierId}") // имя теста
     @Description("Basic test for /api/v1/courier/{courierId} endpoint")
-    void deleteCourierCheckStatusCode() {
+    void deleteCourierCheckResponseAndStatusCode() {
         shouldDeleteCourier = false; // выключаем удаление после теста
         deleteCourier(courierId)
-                .then().statusCode(SC_OK);
-    }
-
-    @Test
-    @DisplayName("Check response of /api/v1/courier/{courierId}") // имя теста
-    @Description("Basic test for /api/v1/courier/{courierId} endpoint")
-    void deleteCourierCheckResponse() {
-        shouldDeleteCourier = false; // выключаем удаление после теста
-        deleteCourier(courierId)
-                .then().assertThat().body("ok", equalTo(true));
+                .then().assertThat().body("ok", equalTo(true)).statusCode(SC_OK);
     }
 
     @Test

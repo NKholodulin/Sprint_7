@@ -12,21 +12,12 @@ public class CreateCourierTest extends ApiSteps {
     private int courierId;
 
     @Test
-    @DisplayName("Check status code of /api/v1/courier") // имя теста
+    @DisplayName("Check response and status code of /api/v1/courier") // имя теста
     @Description("Basic test for /api/v1/courier endpoint")
-    void createCourierStatusCode() {
+    void createCourierCheckResponseAndStatusCode() {
         shouldDeleteCourier = true; // включаем удаление после теста
         createCourier(createCourierData)
-                .then().statusCode(SC_CREATED);
-    }
-
-    @Test
-    @DisplayName("Check response of /api/v1/courier") // имя теста
-    @Description("Basic test for /api/v1/courier endpoint")
-    void createCourierCheckResponse() {
-        shouldDeleteCourier = true; // включаем удаление после теста
-        createCourier(createCourierData)
-                .then().assertThat().body("ok", equalTo(true));
+                .then().assertThat().body("ok", equalTo(true)).statusCode(SC_CREATED);
     }
 
     @Test

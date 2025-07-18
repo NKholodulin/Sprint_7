@@ -20,22 +20,14 @@ public class LoginCourierTest extends ApiSteps {
     }
 
     @Test
-    @DisplayName("Check status code of /api/v1/courier/login") // имя теста
+    @DisplayName("Check response and status code of /api/v1/courier/login") // имя теста
     @Description("Basic test for /api/v1/courier/login endpoint")
-    void loginCourierStatusCode() {
+    void loginCourierCheckResponseAndStatusCode() {
         shouldDeleteCourier = true; // включаем удаление после теста
         loginCourier(createCourierData)
-                .then().statusCode(SC_OK);
+                .then().assertThat().body("id", notNullValue()).statusCode(SC_OK);
     }
 
-    @Test
-    @DisplayName("Check response of /api/v1/courier/login") // имя теста
-    @Description("Basic test for /api/v1/courier/login endpoint")
-    void loginCourierCheckResponse() {
-        shouldDeleteCourier = true; // включаем удаление после теста
-        loginCourier(createCourierData)
-                .then().assertThat().body("id", notNullValue());
-    }
     @Test
     @DisplayName("Request without firstName of /api/v1/courier/login") // имя теста
     @Description("Basic test for /api/v1/courier/login endpoint")
