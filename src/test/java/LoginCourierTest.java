@@ -7,14 +7,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
 public class LoginCourierTest {
-    File jsonCreateCourier = new File("src/test/resources/createCourier.json");
+    CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
     private boolean shouldDeleteCourier = false;
     private int courierId;
 
@@ -22,7 +20,7 @@ public class LoginCourierTest {
     public void setUp() {
 
         RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
-        CreateCourierTest.createCourier(jsonCreateCourier).then().statusCode(201);
+        CreateCourierTest.createCourier(createCourierData).then().statusCode(201);
     }
 
     @Test
@@ -30,7 +28,7 @@ public class LoginCourierTest {
     @Description("Basic test for /api/v1/courier/login endpoint")
     void loginCourierStatusCode() {
         shouldDeleteCourier = true; // включаем удаление после теста
-        loginCourier(jsonCreateCourier)
+        loginCourier(createCourierData)
                 .then().statusCode(200);
     }
 
@@ -39,16 +37,16 @@ public class LoginCourierTest {
     @Description("Basic test for /api/v1/courier/login endpoint")
     void loginCourierCheckResponse() {
         shouldDeleteCourier = true; // включаем удаление после теста
-        loginCourier(jsonCreateCourier)
+        loginCourier(createCourierData)
                 .then().assertThat().body("id", notNullValue());
     }
     @Test
     @DisplayName("Request without firstName of /api/v1/courier/login") // имя теста
     @Description("Basic test for /api/v1/courier/login endpoint")
     void loginCourierCheckWithoutFirstName() {
-        File jsonCreateCourierWithoutFirstName = new File("src/test/resources/createCourierWithoutFirstName.json");
+        CourierData createCourierWithoutFirstNameData = CourierData.withLoginAndPassword("holodTest","1234");
         shouldDeleteCourier = true; // включаем удаление после теста
-        loginCourier(jsonCreateCourierWithoutFirstName)
+        loginCourier(createCourierWithoutFirstNameData)
                 .then().assertThat().body("id", notNullValue()).and().statusCode(200);
     }
 
@@ -56,9 +54,9 @@ public class LoginCourierTest {
     @DisplayName("Request without login of /api/v1/courier/login") // имя теста
     @Description("Negative test for /api/v1/courier/login endpoint")
     void loginCourierCheckWithoutLogin() {
-        File jsonCreateCourierWithoutLogin = new File("src/test/resources/createCourierWithoutLogin.json");
+        CourierData createCourierWithoutLoginData = CourierData.withPasswordAndFirstName("1234", "holod");
         shouldDeleteCourier = true; // включаем удаление после теста
-        loginCourier(jsonCreateCourierWithoutLogin)
+        loginCourier(createCourierWithoutLoginData)
                 .then().statusCode(400);
     }
 
@@ -66,9 +64,9 @@ public class LoginCourierTest {
     @DisplayName("Request without password of /api/v1/courier/login") // имя теста
     @Description("Negative test for /api/v1/courier/login endpoint")
     void loginCourierCheckWithoutPassword() {
-        File jsonCreateCourierWithoutPassword = new File("src/test/resources/createCourierWithoutPassword.json");
+        CourierData createCourierWithoutPasswordData = CourierData.withLoginAndFirstName("holodTest","holod");
         shouldDeleteCourier = true; // включаем удаление после теста
-        loginCourier(jsonCreateCourierWithoutPassword)
+        loginCourier(createCourierWithoutPasswordData)
                 .then().statusCode(400);
     }
 
@@ -76,9 +74,9 @@ public class LoginCourierTest {
     @DisplayName("Request with wrong login of /api/v1/courier/login") // имя теста
     @Description("Negative test for /api/v1/courier/login endpoint")
     void loginCourierWithWrongLogin() {
-        File jsonLoginCourierWithWrongLogin = new File("src/test/resources/loginCourierWithWrongLogin.json");
+        CourierData createCourierWithWrongLoginData = new CourierData("holodTestWrong", "1234", "holod");
         shouldDeleteCourier = true; // включаем удаление после теста
-        loginCourier(jsonLoginCourierWithWrongLogin)
+        loginCourier(createCourierWithWrongLoginData)
                 .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Учетная запись не найдена")).and().statusCode(404);
     }
 
@@ -86,9 +84,9 @@ public class LoginCourierTest {
     @DisplayName("Request with wrong password of /api/v1/courier/login") // имя теста
     @Description("Negative test for /api/v1/courier/login endpoint")
     void loginCourierWithWrongPassword() {
-        File jsonCreateCourierWithIdenticalLogin = new File("src/test/resources/createCourierWithIdenticalLogin.json");
+        CourierData createCourierWithIdenticalLoginData = new CourierData("holodTest", "12341234", "holod1234");
         shouldDeleteCourier = true; // включаем удаление после теста
-        loginCourier(jsonCreateCourierWithIdenticalLogin)
+        loginCourier(createCourierWithIdenticalLoginData)
                 .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Учетная запись не найдена")).and().statusCode(404);
     }
 
@@ -96,16 +94,16 @@ public class LoginCourierTest {
     @DisplayName("Request with non-existent courier of /api/v1/courier/login") // имя теста
     @Description("Negative test for /api/v1/courier/login endpoint")
     void loginCourierWithNonExistentCourier() {
-        File jsonNonExistentCourier = new File("src/test/resources/nonExistentCourier.json");
+        CourierData NonExistentCourierData = new CourierData("nonnonnononnon", "nonnonnononnon", "nonnonnononnon");
         shouldDeleteCourier = true; // включаем удаление после теста
-        loginCourier(jsonNonExistentCourier)
+        loginCourier(NonExistentCourierData)
                 .then().assertThat().body("code", equalTo(404)).body("message", equalTo("Учетная запись не найдена")).and().statusCode(404);
     }
 
     @AfterEach
     void tearDown() {
         if (shouldDeleteCourier) {
-            courierId = loginCourier(jsonCreateCourier)
+            courierId = loginCourier(createCourierData)
                     .then().extract().body().path("id");
             DeleteCourierTest.deleteCourier(courierId)
                     .then().statusCode(200);
@@ -113,11 +111,11 @@ public class LoginCourierTest {
     }
 
     @Step("Send POST request to /api/v1/courier/login")
-    public static Response loginCourier(File json) {
+    public static Response loginCourier(CourierData createCourierData) {
         Response response = given()
                 .header("Content-type", "application/json")
                 .and()
-                .body(json)
+                .body(createCourierData)
                 .when()
                 .post("/api/v1/courier/login");
         return response;

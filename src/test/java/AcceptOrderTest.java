@@ -4,7 +4,6 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.*;
 
-import java.io.File;
 import java.util.Map;
 
 
@@ -12,7 +11,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 public class AcceptOrderTest {
-    File jsonCreateCourier = new File("src/test/resources/createCourier.json");
+    CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
     private boolean shouldDeleteCourier = false;
     private int courierId;
     private int orderId;
@@ -22,8 +21,8 @@ public class AcceptOrderTest {
     public void setUp() {
 
         RestAssured.baseURI = "https://qa-scooter.praktikum-services.ru";
-        CreateCourierTest.createCourier(jsonCreateCourier).then().statusCode(201);
-        courierId = LoginCourierTest.loginCourier(jsonCreateCourier).then().extract().body().path("id");
+        CreateCourierTest.createCourier(createCourierData).then().statusCode(201);
+        courierId = LoginCourierTest.loginCourier(createCourierData).then().extract().body().path("id");
         trackId = CreateOrderTest.createOrder(singleOrderData).then().extract().body().path("track");
         orderId = GetOrderByTrackTest.getOrderByTrack(trackId).then().extract().body().path("order.id");
     }
