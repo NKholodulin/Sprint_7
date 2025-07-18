@@ -1,1 +1,0 @@
-{"uuid":"16bea01d-bfa0-4a33-a9a9-702d085b4ffe","name":"Check response of /api/v1/orders/accept/{orderId}?courierId={courierId}","children":["9818b27f-573b-47d0-8a3a-db97f850d316"],"befores":[],"afters":[],"start":1752692235661,"stop":1752692237161}
