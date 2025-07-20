@@ -81,6 +81,12 @@
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.28</version> <!-- или актуальную версию -->
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
