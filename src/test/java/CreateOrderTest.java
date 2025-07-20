@@ -3,12 +3,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static org.hamcrest.Matchers.*;
 import static org.apache.http.HttpStatus.*;
+import static Api.OrderApi.*;
 
 import java.util.Map;
 
-public class CreateOrderTest extends ApiSteps {
+public class CreateOrderTest extends BaseTest {
     @ParameterizedTest
-    @MethodSource("OrderData#orderDataProvider")
+    @MethodSource("Data.OrderData#orderDataProvider")
     public void createOrderWithParameters(Map<String, Object> orderData) {
         createOrder(orderData)
                 .then()

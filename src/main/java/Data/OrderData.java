@@ -1,10 +1,12 @@
+package Data;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
 public class OrderData {
-    static Stream<Map<String, Object>> orderDataProvider() {
+    public static Stream<Map<String, Object>> orderDataProvider() {
         return Stream.of(
                 createOrderDataBlackGrey(),
                 createOrderDataBlack(),

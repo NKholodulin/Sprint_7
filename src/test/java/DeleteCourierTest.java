@@ -1,3 +1,4 @@
+import Data.CourierData;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -6,8 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.apache.http.HttpStatus.*;
+import static Api.CourierApi.*;
 
-public class DeleteCourierTest extends ApiSteps {
+public class DeleteCourierTest extends BaseTest {
     CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
     private boolean shouldDeleteCourier = false;
     private int courierId;
@@ -16,7 +18,7 @@ public class DeleteCourierTest extends ApiSteps {
     public void setUp() {
         super.setUp();
         createCourier(createCourierData).then().statusCode(SC_CREATED);
-        courierId = LoginCourierTest.loginCourier(createCourierData).then().extract().body().path("id");
+        courierId = loginCourier(createCourierData).then().extract().body().path("id");
     }
 
     @Test

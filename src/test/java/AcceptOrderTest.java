@@ -1,12 +1,16 @@
+import Data.CourierData;
+import Data.OrderData;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.*;
 
 import java.util.Map;
 
+import static Api.OrderApi.*;
+import static Api.CourierApi.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.apache.http.HttpStatus.*;
 
-public class AcceptOrderTest extends ApiSteps {
+public class AcceptOrderTest extends BaseTest {
     CourierData createCourierData = new CourierData("holodTest", "1234", "holod");
     private boolean shouldDeleteCourier = false;
     private int courierId;
@@ -69,7 +73,7 @@ public class AcceptOrderTest extends ApiSteps {
     @AfterEach
     void tearDown() {
         if (shouldDeleteCourier) {
-            DeleteCourierTest.deleteCourier(courierId)
+            deleteCourier(courierId)
                     .then().statusCode(SC_OK);
         }
     }

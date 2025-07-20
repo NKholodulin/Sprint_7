@@ -6,8 +6,9 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.apache.http.HttpStatus.*;
+import static Api.OrderApi.*;
 
-public class ListOrdersTest extends ApiSteps {
+public class ListOrdersTest extends BaseTest {
     @Test
     @DisplayName("Check body and status code of /api/v1/orders") // имя теста
     @Description("Basic test for /api/v1/orders endpoint")

@@ -1,3 +1,4 @@
+import Data.OrderData;
 import io.qameta.allure.Description;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -8,8 +9,9 @@ import java.util.Map;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.apache.http.HttpStatus.*;
+import static Api.OrderApi.*;
 
-public class GetOrderByTrackTest extends ApiSteps {
+public class GetOrderByTrackTest extends BaseTest {
     private int trackId;
     private Map<String, Object> singleOrderData = OrderData.orderDataProvider().findFirst().orElseThrow();
 

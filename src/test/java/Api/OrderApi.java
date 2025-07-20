@@ -1,3 +1,5 @@
+package Api;
+
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
@@ -5,50 +7,20 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
-public class ApiSteps extends BaseApi{
-    // метод для шага "Создать курьера":
-    @Step("Send POST request to /api/v1/courier")
-    public static Response createCourier(CourierData createCourierData) {
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(createCourierData)
-                .when()
-                .post("/api/v1/courier");
-        return response;
-    }
+public class OrderApi {
 
-    @Step("Send POST request to /api/v1/courier/login")
-    public static Response loginCourier(CourierData createCourierData) {
-        Response response = given()
-                .header("Content-type", "application/json")
-                .and()
-                .body(createCourierData)
-                .when()
-                .post("/api/v1/courier/login");
-        return response;
-    }
+    static final String CREATE_ORDER_API = "/api/v1/orders";
+    static final String TRACK_ORDER_API = "/api/v1/orders/track";
+    static final String ACCEPT_ORDER_API = "/api/v1/orders/accept/{orderId}";
+    static final String ACCEPT_ORDER_API_WITHOUT_ORDER_ID = "/api/v1/orders/accept/";
 
-    @Step("Send DELETE request to /api/v1/courier/{courierId}")
-    public static Response deleteCourier(int courierId) {
-        Response response = given()
-                .delete("/api/v1/courier/{courierId}", courierId);
-        return response;
-    }
-
-    @Step("Send DELETE request to /api/v1/courier/courierId")
-    public static Response deleteCourierWithoutId() {
-        Response response = given()
-                .delete("/api/v1/courier/");
-        return response;
-    }
     @Step("Send POST request to /api/v1/orders")
     public static Response createOrder(Map<String, Object> orderData) {
         Response response = given()
                 .contentType("application/json")
                 .body(orderData)
                 .when()
-                .post("/api/v1/orders");
+                .post(CREATE_ORDER_API);
         return response;
     }
 
@@ -57,7 +29,7 @@ public class ApiSteps extends BaseApi{
         Response response = given()
                 .queryParam("t", trackId)
                 .when()
-                .get("/api/v1/orders/track");
+                .get(TRACK_ORDER_API);
         return response;
     }
 
@@ -65,7 +37,7 @@ public class ApiSteps extends BaseApi{
     public static Response getOrderByTrackWithoutTrackId() {
         Response response = given()
                 .when()
-                .get("/api/v1/orders/track");
+                .get(TRACK_ORDER_API);
         return response;
     }
 
@@ -75,7 +47,7 @@ public class ApiSteps extends BaseApi{
                 .queryParam("courierId",courierId)
                 .pathParam("orderId", orderId)
                 .when()
-                .put("/api/v1/orders/accept/{orderId}");
+                .put(ACCEPT_ORDER_API);
         return response;
     }
 
@@ -84,7 +56,7 @@ public class ApiSteps extends BaseApi{
         Response response = given()
                 .pathParam("orderId", orderId)
                 .when()
-                .put("/api/v1/orders/accept/{orderId}");
+                .put(ACCEPT_ORDER_API);
         return response;
     }
 
@@ -93,7 +65,7 @@ public class ApiSteps extends BaseApi{
         Response response = given()
                 .queryParam("courierId", courierId)
                 .when()
-                .put("/api/v1/orders/accept/");
+                .put(ACCEPT_ORDER_API_WITHOUT_ORDER_ID);
         return response;
     }
 
@@ -103,7 +75,7 @@ public class ApiSteps extends BaseApi{
                 .queryParam("courierId",123)
                 .pathParam("orderId", orderId)
                 .when()
-                .put("/api/v1/orders/accept/{orderId}");
+                .put(ACCEPT_ORDER_API);
         return response;
     }
 
@@ -113,7 +85,7 @@ public class ApiSteps extends BaseApi{
                 .queryParam("courierId",courierId)
                 .pathParam("orderId", 123)
                 .when()
-                .put("/api/v1/orders/accept/{orderId}");
+                .put(ACCEPT_ORDER_API);
         return response;
     }
 
@@ -121,7 +93,7 @@ public class ApiSteps extends BaseApi{
     public static Response listOrders() {
         Response response = given()
                 .when()
-                .get("/api/v1/orders");
+                .get(CREATE_ORDER_API);
         return response;
     }
 }
